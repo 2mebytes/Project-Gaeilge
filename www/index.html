@@ -1,0 +1,132 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <!--<meta charset="UTF-8" />-->
+    <title>Project Gaeilge</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.22.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS";
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var SceneA = new Phaser.Class({
+    Extends: Phaser.Scene,
+    initialize:
+    function SceneA (){
+        Phaser.Scene.call(this, {key: 'sceneA'});
+    },
+    preload: function(){
+        this.load.image('bgA', 'assets/bg2.png');
+        this.load.image('apple', 'assets/apple.png');
+        console.log('sceneA preloaded');
+    },
+    create: function(){
+        this.add.sprite(400, 300, 'bgA');
+        this.add.sprite(300, 400, 'apple');
+        console.log('sceneA created');
+        this.input.once('pointerdown', function () {
+            console.log('From SceneA to SceneB');
+            this.scene.start('sceneB');
+        }, this);
+    },
+})
+
+var SceneB = new Phaser.Class({
+    Extends: Phaser.Scene,
+    initialize:
+    function SceneB (){
+        Phaser.Scene.call(this, {key: 'sceneB'});
+    },
+    preload: function(){
+        this.load.image('bgB', 'assets/wow.png');
+        this.load.image('cake', 'assets/cake.png');
+    },
+    create: function(){
+        this.add.sprite(400, 300, 'bgB');
+        this.add.sprite(100, 250, 'cake');
+        this.input.once('pointerdown', function () {
+            console.log('From SceneB to SceneA');
+            this.scene.start('sceneA');
+        }, this);
+    },
+})
+
+
+
+
+var config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    scene: [ SceneA, SceneB]
+};
+
+var game = new Phaser.Game(config);
+
+
+
+////functions
+
+function addInv(invItem){
+    console.log("clicked!");
+    invItem.isKnown = true;    
+    invItem.inInv += 1;
+    itemText.setText(invItem.gaeilge + ": " + invItem.inInv);
+    console.log(invItem.inInv);
+}
+
+
+var itemText;
+
+/*function create () {
+    loadScene(this, "scene1");
+    //var textbox = this.add.image(16, 500, 'textbox');
+    //textbox.hideObj;
+    //  note for later: when clicking the tree, make an apple fall and bounce similar to stars in tutorial
+
+    itemText = this.add.text(16, 16, 'test', {fontFamily: "Trebuchet MS", fontSize: '32px', fill: '#000000' });
+    convoText = this.add.text(16, 500, ' ', {fontFamily: "Trebuchet MS", fontSize: '32px', fill: '#000000' });
+    apple.pic.setInteractive();
+    person.setInteractive();
+    apple.pic.on('clicked', apple.addInv);
+    apple.pic.on('clicked', hideObj, this);
+    person.on('clicked', convo, this);
+
+    this.input.on('gameobjectup', function (pointer, gameObject) {
+        gameObject.emit('clicked', gameObject);
+    }, this);
+}*/
+
+function hideObj(invItem){ //couldn't figure out how to combine addInv and hideObj so I made two seperate functions
+    invItem.off('clicked', invItem.addInv);
+    invItem.input.enabled = false;
+    invItem.setVisible(false);
+}
+
+function convo(personConvo){
+    if (apple.inInv >= 1) {
+        convoText.setText("Thank you for an " + apple.gaeilge + "!");
+        apple.inInv -= 1;
+        itemText.setText(apple.gaeilge + ": " + apple.inInv);
+    }
+    else{
+        convoText.setText("Hi, I want one " + apple.gaeilge + ". Can you help me?");
+    }
+    //personConvo.off('clicked', personConvo.convo);
+}
+
+function update ()
+{
+
+}
+
+</script>
+
+</body>
+</html>
